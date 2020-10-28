@@ -8,8 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cc.anisimov.vlad.simplealbumlist.R
@@ -46,12 +44,6 @@ class AlbumListFragment : Fragment() {
         rv.layoutManager = GridLayoutManager(requireContext(), 2)
         listAdapter = FlexibleAdapter<AlbumAdapterItem>(ArrayList())
         rv.adapter = listAdapter
-        rv.addItemDecoration(
-            DividerItemDecoration(
-                requireContext(),
-                VERTICAL
-            )
-        )
         viewModel.oAlbumList.observe(viewLifecycleOwner) { albumList ->
             listAdapter.clear()
             val adapterItems = albumList.map { AlbumAdapterItem(it) }
