@@ -1,4 +1,4 @@
-package cc.anisimov.vlad.simplealbumlist.ui
+package cc.anisimov.vlad.simplealbumlist.ui.common
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
