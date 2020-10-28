@@ -18,7 +18,7 @@ class AlbumListViewModel @ViewModelInject constructor(private val albumRepo: Alb
     //  o for observable
     val oAlbumList: MutableLiveData<List<AlbumUI>> = MutableLiveData(ArrayList())
     val oLoading = MutableLiveData(false)
-    val oError: MutableLiveData<String> = MutableLiveData(null)
+    val oError: MutableLiveData<String?> = MutableLiveData(null)
 
     init {
         loadAlbums()
@@ -29,7 +29,7 @@ class AlbumListViewModel @ViewModelInject constructor(private val albumRepo: Alb
         viewModelScope.launch {
             val result = albumRepo.getAlbumByUserId(USER_ID)
             if (result is RequestResult.Error) {
-                oError.postValue(result.toString())
+                oError.value = result.toString()
                 oLoading.value = false
                 return@launch
             }

@@ -3,9 +3,12 @@ package cc.anisimov.vlad.simplealbumlist.ui.fragment
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
@@ -20,6 +23,8 @@ import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
 import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
 import kotlinx.android.synthetic.main.fragment_album_list.*
+import kotlinx.android.synthetic.main.loading_overlay.*
+
 
 @AndroidEntryPoint
 class AlbumListFragment : Fragment() {
@@ -38,6 +43,36 @@ class AlbumListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         toolbar.setTitle(R.string.albums)
         setupList()
+        setupLoading()
+        setupErrorHandling()
+    }
+
+    private fun setupErrorHandling() {
+        viewModel.oError.observe(viewLifecycleOwner) { errorText ->
+            if (errorText != null) {
+                showSimpleDialog(errorText)
+            }
+        }
+    }
+
+    private fun showSimpleDialog(errorText: String?) {
+        AlertDialog.Builder(requireContext()).setTitle("Alert")
+            .setMessage(errorText)
+            .setTitle(R.string.error_title)
+            .setPositiveButton(
+                "OK"
+            ) { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+    private fun setupLoading() {
+        viewModel.oLoading.observe(viewLifecycleOwner) { loading ->
+            if (loading) {
+                loadingOverlay.visibility = VISIBLE
+            } else {
+                loadingOverlay.visibility = GONE
+            }
+        }
     }
 
     private fun setupList() {
