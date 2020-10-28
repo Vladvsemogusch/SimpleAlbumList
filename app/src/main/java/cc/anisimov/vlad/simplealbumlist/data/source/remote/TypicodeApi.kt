@@ -9,8 +9,12 @@ import retrofit2.http.Query
 interface TypicodeApi {
 
     @GET("albums")
-    fun getAlbumsByUserId(@Query("userId") userId: Int): Response<List<Album>>
+    suspend fun getAlbumsByUserId(@Query("userId") userId: Int): Response<List<Album>>
 
     @GET("photos")
-    fun getPhotosByAlbumId(@Query("albumId") albumId: Int): Response<List<Photo>>
+    suspend fun getPhotosByAlbumId(
+        @Query("albumId") albumId: Int,
+        @Query("_limit") limit: Int? = null
+    ): Response<List<Photo>>
+
 }
