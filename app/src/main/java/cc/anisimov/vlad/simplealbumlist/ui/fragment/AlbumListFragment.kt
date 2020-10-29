@@ -71,7 +71,9 @@ class AlbumListFragment : BaseFragment() {
         listAdapter = FlexibleAdapter<AlbumAdapterItem>(ArrayList())
         rv.adapter = listAdapter
         viewModel.oAlbumList.observe(viewLifecycleOwner) { albumList ->
-            listAdapter.clear()
+            if (albumList == null || albumList.isEmpty()) {
+                return@observe
+            }
             val adapterItems = albumList.map { AlbumAdapterItem(it) }
             listAdapter.addItems(0, adapterItems)
         }
@@ -87,7 +89,7 @@ class AlbumListFragment : BaseFragment() {
 
     class AlbumAdapterItem(private val album: AlbumUI) :
         AbstractFlexibleItem<AlbumAdapterItem.AlbumViewHolder>() {
-        val albumId: Int
+        val albumId
             get() = album.id
 
         override fun equals(other: Any?): Boolean {

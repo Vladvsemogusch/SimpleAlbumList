@@ -23,5 +23,23 @@
         <argument
             android:name="albumId"
             app:argType="integer" />
+        <action
+            android:id="@+id/actionPhotoListToDetail"
+            app:destination="@id/photoDetailFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoDetailFragment"
+        android:name="cc.anisimov.vlad.simplealbumlist.ui.fragment.PhotoDetailFragment"
+        android:label="PhotoDetailFragment">
+        <argument
+            android:name="url"
+            app:argType="string" />
+        <argument
+            android:name="title"
+            app:argType="string" />
     </fragment>
 </navigation>

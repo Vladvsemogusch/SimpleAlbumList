@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -70,15 +71,32 @@ class PhotoListFragment : BaseFragment() {
         rv.layoutManager = GridLayoutManager(requireContext(), 2)
         listAdapter = FlexibleAdapter<PhotoAdapterItem>(ArrayList())
         rv.adapter = listAdapter
-        viewModel.oPhotoList.observe(viewLifecycleOwner) { albumList ->
-            listAdapter.clear()
-            val adapterItems = albumList.map { PhotoAdapterItem(it) }
+        viewModel.oPhotoList.observe(viewLifecycleOwner) { photoList ->
+            if (photoList == null || photoList.isEmpty()) {
+                return@observe
+            }
+            val adapterItems = photoList.map { PhotoAdapterItem(it) }
             listAdapter.addItems(0, adapterItems)
         }
+        listAdapter.addListener(
+            FlexibleAdapter.OnItemClickListener { view: View, position: Int ->
+                val item = listAdapter.getItem(position)!!
+                val photoUrl = item.photoUrl
+                val photoTitle = item.photoTitle
+                val directions =
+                    PhotoListFragmentDirections.actionPhotoListToDetail(photoUrl, photoTitle)
+                val nav = findNavController()
+                nav?.navigate(directions)
+                true
+            })
     }
 
-    class PhotoAdapterItem(val photo: PhotoUI) :
+    class PhotoAdapterItem(private val photo: PhotoUI) :
         AbstractFlexibleItem<PhotoAdapterItem.PhotoViewHolder>() {
+        val photoUrl
+            get() = photo.url
+        val photoTitle
+            get() = photo.title
 
         override fun equals(other: Any?): Boolean {
             if (other is PhotoAdapterItem) {
