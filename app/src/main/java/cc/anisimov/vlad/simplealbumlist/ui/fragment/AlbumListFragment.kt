@@ -8,8 +8,6 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -17,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import cc.anisimov.vlad.simplealbumlist.R
 import cc.anisimov.vlad.simplealbumlist.domain.model.AlbumUI
 import cc.anisimov.vlad.simplealbumlist.domain.viewmodel.AlbumListViewModel
+import cc.anisimov.vlad.simplealbumlist.ui.common.BaseFragment
 import coil.load
 import dagger.hilt.android.AndroidEntryPoint
 import eu.davidea.flexibleadapter.FlexibleAdapter
@@ -29,7 +28,7 @@ import kotlinx.android.synthetic.main.toolbar.*
 
 
 @AndroidEntryPoint
-class AlbumListFragment : Fragment() {
+class AlbumListFragment : BaseFragment() {
     private val viewModel: AlbumListViewModel by viewModels()
     private lateinit var listAdapter: FlexibleAdapter<AlbumAdapterItem>
 
@@ -43,7 +42,7 @@ class AlbumListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        toolbar.setTitle(R.string.albums)
+        setupToolbar(toolbar, getString(R.string.albums), false)
         setupList()
         setupLoading()
         setupErrorHandling()
@@ -55,16 +54,6 @@ class AlbumListFragment : Fragment() {
                 showSimpleDialog(errorText)
             }
         }
-    }
-
-    private fun showSimpleDialog(errorText: String?) {
-        AlertDialog.Builder(requireContext()).setTitle("Alert")
-            .setMessage(errorText)
-            .setTitle(R.string.error_title)
-            .setPositiveButton(
-                "OK"
-            ) { dialog, _ -> dialog.dismiss() }
-            .show()
     }
 
     private fun setupLoading() {
@@ -88,6 +77,7 @@ class AlbumListFragment : Fragment() {
         }
         listAdapter.addListener(
             FlexibleAdapter.OnItemClickListener { view: View, position: Int ->
+                //  Transition lags innate to jetpack navigation
                 val item = listAdapter.getItem(position)!!
                 val directions = AlbumListFragmentDirections.actionAlbumToPhoto(item.albumId)
                 findNavController().navigate(directions)

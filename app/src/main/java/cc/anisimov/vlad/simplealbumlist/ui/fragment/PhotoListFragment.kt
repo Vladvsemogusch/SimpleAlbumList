@@ -6,8 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
@@ -15,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import cc.anisimov.vlad.simplealbumlist.R
 import cc.anisimov.vlad.simplealbumlist.domain.model.PhotoUI
 import cc.anisimov.vlad.simplealbumlist.domain.viewmodel.PhotoListViewModel
+import cc.anisimov.vlad.simplealbumlist.ui.common.BaseFragment
 import coil.load
 import dagger.hilt.android.AndroidEntryPoint
 import eu.davidea.flexibleadapter.FlexibleAdapter
@@ -26,7 +25,7 @@ import kotlinx.android.synthetic.main.loading_overlay.*
 import kotlinx.android.synthetic.main.toolbar.*
 
 @AndroidEntryPoint
-class PhotoListFragment : Fragment() {
+class PhotoListFragment : BaseFragment() {
     private val viewModel: PhotoListViewModel by viewModels()
     private lateinit var listAdapter: FlexibleAdapter<PhotoAdapterItem>
     private val args: PhotoListFragmentArgs by navArgs()
@@ -42,7 +41,7 @@ class PhotoListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.start(args.albumId)
-        toolbar.setTitle(R.string.photos)
+        setupToolbar(toolbar, getString(R.string.photos))
         setupList()
         setupLoading()
         setupErrorHandling()
@@ -56,15 +55,6 @@ class PhotoListFragment : Fragment() {
         }
     }
 
-    private fun showSimpleDialog(errorText: String?) {
-        AlertDialog.Builder(requireContext()).setTitle("Alert")
-            .setMessage(errorText)
-            .setTitle(R.string.error_title)
-            .setPositiveButton(
-                "OK"
-            ) { dialog, _ -> dialog.dismiss() }
-            .show()
-    }
 
     private fun setupLoading() {
         viewModel.oLoading.observe(viewLifecycleOwner) { loading ->
