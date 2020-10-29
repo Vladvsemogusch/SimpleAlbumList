@@ -1,0 +1,131 @@
+package cc.anisimov.vlad.simplealbumlist.ui.fragment
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import cc.anisimov.vlad.simplealbumlist.R
+import cc.anisimov.vlad.simplealbumlist.domain.model.PhotoUI
+import cc.anisimov.vlad.simplealbumlist.domain.viewmodel.PhotoListViewModel
+import coil.load
+import dagger.hilt.android.AndroidEntryPoint
+import eu.davidea.flexibleadapter.FlexibleAdapter
+import eu.davidea.flexibleadapter.items.AbstractFlexibleItem
+import eu.davidea.flexibleadapter.items.IFlexible
+import eu.davidea.viewholders.FlexibleViewHolder
+import kotlinx.android.synthetic.main.fragment_album_list.*
+import kotlinx.android.synthetic.main.loading_overlay.*
+import kotlinx.android.synthetic.main.toolbar.*
+
+@AndroidEntryPoint
+class PhotoListFragment : Fragment() {
+    private val viewModel: PhotoListViewModel by viewModels()
+    private lateinit var listAdapter: FlexibleAdapter<PhotoAdapterItem>
+    private val args: PhotoListFragmentArgs by navArgs()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_photo_list, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.start(args.albumId)
+        toolbar.setTitle(R.string.photos)
+        setupList()
+        setupLoading()
+        setupErrorHandling()
+    }
+
+    private fun setupErrorHandling() {
+        viewModel.oError.observe(viewLifecycleOwner) { errorText ->
+            if (errorText != null) {
+                showSimpleDialog(errorText)
+            }
+        }
+    }
+
+    private fun showSimpleDialog(errorText: String?) {
+        AlertDialog.Builder(requireContext()).setTitle("Alert")
+            .setMessage(errorText)
+            .setTitle(R.string.error_title)
+            .setPositiveButton(
+                "OK"
+            ) { dialog, _ -> dialog.dismiss() }
+            .show()
+    }
+
+    private fun setupLoading() {
+        viewModel.oLoading.observe(viewLifecycleOwner) { loading ->
+            if (loading) {
+                loadingOverlay.visibility = View.VISIBLE
+            } else {
+                loadingOverlay.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun setupList() {
+        rv.layoutManager = GridLayoutManager(requireContext(), 2)
+        listAdapter = FlexibleAdapter<PhotoAdapterItem>(ArrayList())
+        rv.adapter = listAdapter
+        viewModel.oPhotoList.observe(viewLifecycleOwner) { albumList ->
+            listAdapter.clear()
+            val adapterItems = albumList.map { PhotoAdapterItem(it) }
+            listAdapter.addItems(0, adapterItems)
+        }
+    }
+
+    class PhotoAdapterItem(val photo: PhotoUI) :
+        AbstractFlexibleItem<PhotoAdapterItem.PhotoViewHolder>() {
+
+        override fun equals(other: Any?): Boolean {
+            if (other is PhotoAdapterItem) {
+                return this.photo.id == other.photo.id
+            }
+            return false
+        }
+
+        override fun getLayoutRes(): Int {
+            return R.layout.item_photo
+        }
+
+        override fun createViewHolder(
+            view: View,
+            adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>
+        ): PhotoViewHolder {
+            return PhotoViewHolder(view, adapter)
+        }
+
+        override fun bindViewHolder(
+            adapter: FlexibleAdapter<IFlexible<RecyclerView.ViewHolder>>,
+            holder: PhotoViewHolder,
+            position: Int,
+            payloads: MutableList<Any>?
+        ) {
+            holder.ivThumbnail.load(photo.thumbnailUrl)
+            holder.tvPhotoTitle.text = photo.title
+        }
+
+        override fun hashCode(): Int {
+            return photo.id.hashCode()
+        }
+
+        class PhotoViewHolder(view: View, adapter: FlexibleAdapter<*>) :
+            FlexibleViewHolder(view, adapter) {
+            val ivThumbnail: ImageView = view.findViewById(R.id.ivThumbnail)
+            val tvPhotoTitle: TextView = view.findViewById(R.id.tvPhotoTitle)
+        }
+    }
+}

@@ -1,10 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/main_graph.xml"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_graph.xml"
     app:startDestination="@id/albumListFragment">
 
     <fragment
         android:id="@+id/albumListFragment"
         android:name="cc.anisimov.vlad.simplealbumlist.ui.fragment.AlbumListFragment"
-        android:label="AlbumListFragment" />
+        android:label="AlbumListFragment">
+        <action
+            android:id="@+id/actionAlbumToPhoto"
+            app:destination="@id/photoListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/photoListFragment"
+        android:name="cc.anisimov.vlad.simplealbumlist.ui.fragment.PhotoListFragment"
+        android:label="PhotoListFragment">
+        <argument
+            android:name="albumId"
+            app:argType="integer" />
+    </fragment>
 </navigation>
