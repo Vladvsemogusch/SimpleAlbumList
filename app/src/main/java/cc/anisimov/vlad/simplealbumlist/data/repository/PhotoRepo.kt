@@ -13,7 +13,7 @@ class PhotoRepo @Inject constructor(
     private val remoteApi: TypicodeApi
 ) {
 
-    suspend fun getAlbumThumbnailData(albumId: Int): RequestResult<List<String>> = withContext(IO) {
+    suspend fun getAlbumThumbnailUrls(albumId: Int): RequestResult<List<String>> = withContext(IO) {
         val result =
             kotlin.runCatching { remoteApi.getPhotosByAlbumId(albumId, 4) }
         if (result.isFailure) {

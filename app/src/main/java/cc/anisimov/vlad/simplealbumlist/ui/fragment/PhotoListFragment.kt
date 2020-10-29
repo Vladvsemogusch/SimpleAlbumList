@@ -85,8 +85,7 @@ class PhotoListFragment : BaseFragment() {
                 val photoTitle = item.photoTitle
                 val directions =
                     PhotoListFragmentDirections.actionPhotoListToDetail(photoUrl, photoTitle)
-                val nav = findNavController()
-                nav?.navigate(directions)
+                findNavController().navigate(directions)
                 true
             })
     }

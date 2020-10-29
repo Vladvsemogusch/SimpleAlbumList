@@ -24,7 +24,7 @@ class AlbumRepo @Inject constructor(
         val albumList = result.getOrNull()!!.body()!!
         val albumUIList: MutableList<AlbumUI> = ArrayList()
         for (album in albumList) {
-            val thumbnailResult = photoRepo.getAlbumThumbnailData(album.id)
+            val thumbnailResult = photoRepo.getAlbumThumbnailUrls(album.id)
             if (thumbnailResult is RequestResult.Error) {
                 return@withContext thumbnailResult
             }
