@@ -10,7 +10,11 @@
         android:label="AlbumListFragment">
         <action
             android:id="@+id/actionAlbumToPhoto"
-            app:destination="@id/photoListFragment" />
+            app:destination="@id/photoListFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right" />
     </fragment>
     <fragment
         android:id="@+id/photoListFragment"

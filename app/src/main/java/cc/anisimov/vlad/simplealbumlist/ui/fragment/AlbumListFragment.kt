@@ -77,7 +77,7 @@ class AlbumListFragment : BaseFragment() {
         }
         listAdapter.addListener(
             FlexibleAdapter.OnItemClickListener { view: View, position: Int ->
-                //  Transition lags innate to jetpack navigation
+                //  Possible transition lags innate to jetpack navigation
                 val item = listAdapter.getItem(position)!!
                 val directions = AlbumListFragmentDirections.actionAlbumToPhoto(item.albumId)
                 findNavController().navigate(directions)
