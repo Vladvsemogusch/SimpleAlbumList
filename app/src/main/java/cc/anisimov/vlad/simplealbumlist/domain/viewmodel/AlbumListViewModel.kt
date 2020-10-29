@@ -27,7 +27,7 @@ class AlbumListViewModel @ViewModelInject constructor(private val albumRepo: Alb
     private fun loadAlbums() {
         oLoading.value = true
         viewModelScope.launch {
-            val result = albumRepo.getAlbumByUserId(USER_ID)
+            val result = albumRepo.getAlbumsByUserId(USER_ID)
             if (result is RequestResult.Error) {
                 oError.value = result.toString()
                 oLoading.value = false

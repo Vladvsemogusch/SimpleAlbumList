@@ -14,7 +14,7 @@ class AlbumRepo @Inject constructor(
     private val photoRepo: PhotoRepo
 ) {
 
-    suspend fun getAlbumByUserId(userId: Int): RequestResult<List<AlbumUI>> = withContext(
+    suspend fun getAlbumsByUserId(userId: Int): RequestResult<List<AlbumUI>> = withContext(
         Dispatchers.IO
     ) {
         val result = kotlin.runCatching { remoteApi.getAlbumsByUserId(userId) }
