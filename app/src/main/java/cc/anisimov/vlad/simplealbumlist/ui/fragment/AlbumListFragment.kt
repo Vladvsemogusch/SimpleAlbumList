@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import cc.anisimov.vlad.simplealbumlist.R
@@ -24,6 +25,7 @@ import eu.davidea.flexibleadapter.items.IFlexible
 import eu.davidea.viewholders.FlexibleViewHolder
 import kotlinx.android.synthetic.main.fragment_album_list.*
 import kotlinx.android.synthetic.main.loading_overlay.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 
 @AndroidEntryPoint
@@ -84,15 +86,21 @@ class AlbumListFragment : Fragment() {
             val adapterItems = albumList.map { AlbumAdapterItem(it) }
             listAdapter.addItems(0, adapterItems)
         }
+        listAdapter.addListener(
+            FlexibleAdapter.OnItemClickListener { view: View, position: Int ->
+                val item = listAdapter.getItem(position)!!
+                val directions = AlbumListFragmentDirections.actionAlbumToPhoto(item.albumId)
+                findNavController().navigate(directions)
+                true
+            })
     }
 
-    class AlbumAdapterItem(val album: AlbumUI) :
+    class AlbumAdapterItem(private val album: AlbumUI) :
         AbstractFlexibleItem<AlbumAdapterItem.AlbumViewHolder>() {
+        val albumId: Int
+            get() = album.id
 
         override fun equals(other: Any?): Boolean {
-            if (other == null) {
-                return false
-            }
             if (other is AlbumAdapterItem) {
                 return this.album.id == other.album.id
             }
